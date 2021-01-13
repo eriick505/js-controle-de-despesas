@@ -7,14 +7,14 @@ const nameDisplay = document.querySelector('#text');
 const amountDisplay = document.querySelector('#amount');
 
 var dummyTransactions = [
-  { id: 0, name: 'violão', amount: -350 },
-  { id: 1, name: 'computador', amount: -680 },
-  { id: 2, name: 'salario', amount: 1500 },
-  { id: 3, name: 'freela', amount: 600 },
-  { id: 4, name: 'feira', amount: 310 }
+  // { id: 0, name: 'violão', amount: -350 },
+  // { id: 1, name: 'computador', amount: -680 },
+  // { id: 2, name: 'salario', amount: 1500 },
+  // { id: 3, name: 'freela', amount: 600 },
+  // { id: 4, name: 'feira', amount: 310 }
 ];
 
-const addValues = () => {
+const addBalanceValues = () => {
   const transactionsAmount = dummyTransactions.map(({amount}) => amount)
 
   const total = transactionsAmount
@@ -33,17 +33,27 @@ const addValues = () => {
   moneyMinus.textContent = `R$ ${expanse}`
 }
 
-const addTransactionIntoDOM = ({ amount, name }) => {
+const deleteTransaction = ID => {
+  dummyTransactions = dummyTransactions.filter(transactions => transactions.id !== ID)
+
+  addBalanceValues()
+  init()
+}
+
+const addTransactionIntoDOM = ({ id, amount, name }) => {
   const li = document.createElement('li');
   const toggleClass = amount > 0 ? 'plus' : 'minus';
   const toggleOperator = amount < 0 ? '-' : '';
   const amountTransactionAbsolute = Math.abs(amount).toFixed(2);
 
   li.classList.add(toggleClass);
-  li.innerHTML = `${name} <span>${toggleOperator} ${amountTransactionAbsolute}</span><button class="delete-btn">x</button>`;
+  li.innerHTML = `
+  ${name} <span>${toggleOperator} ${amountTransactionAbsolute}</span>
+  <button onclick="deleteTransaction(${id})" class="delete-btn">x</button>
+  `;
   transactionsUL.append(li);
 
-  addValues();
+  addBalanceValues();
 }
 
 const init = () => {
@@ -52,27 +62,40 @@ const init = () => {
 }
 init();
 
+const clearInputs = (nameDisplay, amountDisplay) => {
+  nameDisplay.value = '';
+  amountDisplay.value = '';
+}
+
+const generateID = () => {
+  const id = dummyTransactions.reduce((accumulator, transaction) => {
+    accumulator = transaction.id + 1;
+    return accumulator;
+  }, 0)
+
+  return id;
+}
 
 formDisplay.addEventListener('submit', event => {
   event.preventDefault();
 
   const nameValue = nameDisplay.value.trim();
   const amountValue = Number(amountDisplay.value.trim());
+  const isInputEmpty = nameDisplay.value == '' || amountDisplay.value == ''
   
-  if(nameDisplay.value == '' || amountDisplay.value == '') {
+  if(isInputEmpty) {
     alert('Você precisa preencher os 2 campos')
     return;
   }
 
   var newTransaction = {
-    id: 1,
+    id: generateID(),
     name: nameValue,
     amount: amountValue
   }
 
   dummyTransactions.push(newTransaction)
-  nameDisplay.value = '';
-  amountDisplay.value = '';
+  clearInputs(nameDisplay, amountDisplay)
 
   init();
 })
