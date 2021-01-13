@@ -6,12 +6,17 @@ const formDisplay = document.querySelector('#form');
 const nameDisplay = document.querySelector('#text');
 const amountDisplay = document.querySelector('#amount');
 
+const formUpdateDisplay = document.querySelector('#updateForm');
+const updateTextDisplay = document.querySelector('#updateText');
+const updateAmountDisplay = document.querySelector('#updateAmount');
+
+
 var dummyTransactions = [
-  // { id: 0, name: 'violão', amount: -350 },
-  // { id: 1, name: 'computador', amount: -680 },
-  // { id: 2, name: 'salario', amount: 1500 },
-  // { id: 3, name: 'freela', amount: 600 },
-  // { id: 4, name: 'feira', amount: 310 }
+  { id: 0, name: 'violão', amount: -350 },
+  { id: 1, name: 'computador', amount: -680 },
+  { id: 2, name: 'salario', amount: 1500 },
+  { id: 3, name: 'freela', amount: 600 },
+  { id: 4, name: 'feira', amount: 310 }
 ];
 
 const addBalanceValues = () => {
@@ -40,6 +45,26 @@ const deleteTransaction = ID => {
   init()
 }
 
+const activeUpdateForm = ID => {
+  formUpdateDisplay.classList.add('animateSlideDown')
+
+  const updateTransaction = dummyTransactions
+    .filter(transaction => transaction.id == ID)
+    .reduce((accumulator, item) => {
+      accumulator = item
+      return accumulator
+    }, {})
+
+    updateTextDisplay.value = updateTransaction.name;
+    updateAmountDisplay.value = updateTransaction.amount;
+
+    formUpdateDisplay.addEventListener('submit', event => {
+      event.preventDefault();
+
+      dummyTransactions.splice(ID, 1)
+    })
+}
+
 const addTransactionIntoDOM = ({ id, amount, name }) => {
   const li = document.createElement('li');
   const toggleClass = amount > 0 ? 'plus' : 'minus';
@@ -50,6 +75,7 @@ const addTransactionIntoDOM = ({ id, amount, name }) => {
   li.innerHTML = `
   ${name} <span>${toggleOperator} ${amountTransactionAbsolute}</span>
   <button onclick="deleteTransaction(${id})" class="delete-btn">x</button>
+  <button onclick="activeUpdateForm(${id})" class="update-btn">⇄</button>
   `;
   transactionsUL.append(li);
 

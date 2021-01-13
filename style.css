@@ -22,6 +22,7 @@ body {
 .container {
   margin: 30px auto;
   width: 350px;
+  position: relative;
 }
 
 h1 {
@@ -147,6 +148,53 @@ input[type='number'] {
   transition: opacity 0.3s ease;
 }
 
-.transactions li:hover .delete-btn {
+.update-btn {
+  cursor: pointer;
+  background-color: rgb(230, 160, 30);
+  border: 0;
+  color: #fff;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 2px 5px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(128%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+
+.transactions li:hover .delete-btn,
+.transactions li:hover .update-btn {
   opacity: 1;
+}
+
+#updateForm {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: #fff;
+  padding: 8px;
+  box-shadow: 3px 3px 7px 1px rgba(0, 0, 0, 0.12);
+  display: none;
+  transition: all .2s ease-in-out;
+}
+
+.animateSlideDown {
+  display: block !important;
+  animation-name: slideDown;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-66%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
 }
