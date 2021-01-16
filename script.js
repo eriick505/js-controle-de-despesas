@@ -10,13 +10,12 @@ const formUpdateDisplay = document.querySelector('#updateForm');
 const updateTextDisplay = document.querySelector('#updateText');
 const updateAmountDisplay = document.querySelector('#updateAmount');
 
-
 var dummyTransactions = [
-  { id: 0, name: 'violão', amount: -350 },
-  { id: 1, name: 'computador', amount: -680 },
-  { id: 2, name: 'salario', amount: 1500 },
-  { id: 3, name: 'freela', amount: 600 },
-  { id: 4, name: 'feira', amount: 310 }
+  { id: 1, name: 'violão', amount: -350 },
+  { id: 2, name: 'computador', amount: -680 },
+  { id: 3, name: 'salario', amount: 1500 },
+  { id: 4, name: 'freela', amount: 600 },
+  { id: 5, name: 'feira', amount: 310 }
 ];
 
 const addBalanceValues = () => {
@@ -48,8 +47,8 @@ const deleteTransaction = ID => {
 const activeUpdateForm = ID => {
   formUpdateDisplay.classList.add('animateSlideDown')
 
-  const updateTransaction = dummyTransactions
-    .filter(transaction => transaction.id == ID)
+  var updateTransaction = dummyTransactions
+    .filter((transaction, index) => index == ID)
     .reduce((accumulator, item) => {
       accumulator = item
       return accumulator
@@ -60,12 +59,22 @@ const activeUpdateForm = ID => {
 
     formUpdateDisplay.addEventListener('submit', event => {
       event.preventDefault();
+      
+      updateTransaction.name = updateTextDisplay.value
+      updateTransaction.amount = Number(updateAmountDisplay.value)
 
-      dummyTransactions.splice(ID, 1)
+      dummyTransactions.splice(ID, 1, updateTransaction)
+
+      formUpdateDisplay.classList.remove('animateSlideDown')
+      
+      addBalanceValues()
+      init()
+
+      updateTransaction = null;
     })
 }
 
-const addTransactionIntoDOM = ({ id, amount, name }) => {
+const addTransactionIntoDOM = ({ id, amount, name }, index) => {
   const li = document.createElement('li');
   const toggleClass = amount > 0 ? 'plus' : 'minus';
   const toggleOperator = amount < 0 ? '-' : '';
@@ -73,9 +82,9 @@ const addTransactionIntoDOM = ({ id, amount, name }) => {
 
   li.classList.add(toggleClass);
   li.innerHTML = `
-  ${name} <span>${toggleOperator} ${amountTransactionAbsolute}</span>
+  ${name} <span>${toggleOperator} R$ ${amountTransactionAbsolute}</span>
   <button onclick="deleteTransaction(${id})" class="delete-btn">x</button>
-  <button onclick="activeUpdateForm(${id})" class="update-btn">⇄</button>
+  <button onclick="activeUpdateForm(${index})" class="update-btn">⇄</button>
   `;
   transactionsUL.append(li);
 
@@ -94,12 +103,7 @@ const clearInputs = (nameDisplay, amountDisplay) => {
 }
 
 const generateID = () => {
-  const id = dummyTransactions.reduce((accumulator, transaction) => {
-    accumulator = transaction.id + 1;
-    return accumulator;
-  }, 0)
-
-  return id;
+  return dummyTransactions.length + 1;
 }
 
 formDisplay.addEventListener('submit', event => {
@@ -122,6 +126,7 @@ formDisplay.addEventListener('submit', event => {
 
   dummyTransactions.push(newTransaction)
   clearInputs(nameDisplay, amountDisplay)
+  nameDisplay.focus();
 
   init();
 })
